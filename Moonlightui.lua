@@ -2957,6 +2957,10 @@ function library:Toggle()
             self.open = true
             self.holder.Visible = not self.holder.Visible
 
+            services.ContextActionService:BindAction("disable_mouse_input", function()
+                return Enum.ContextActionResult.Sink
+            end, false, Enum.UserInputType.MouseButton1, Enum.UserInputType.MouseButton2, Enum.UserInputType.MouseButton3, Enum.UserInputType.MouseWheel)
+
             for _, object in next, self.objects do
                 if object.AbsoluteVisible then
                     local old = object.Transparency
