@@ -31,7 +31,7 @@ return {
         ["SkyboxRt"] = "rbxassetid://1417494499",
         ["SkyboxUp"] = "rbxassetid://1417494643",
     },
-    ["Setting Sun"] = {
+    ["sun"] = {
         ["SkyboxBk"] = "rbxassetid://626460377",
         ["SkyboxDn"] = "rbxassetid://626460216",
         ["SkyboxFt"] = "rbxassetid://626460513",
@@ -39,7 +39,7 @@ return {
         ["SkyboxRt"] = "rbxassetid://626458639",
         ["SkyboxUp"] = "rbxassetid://626460625",
     },
-    ["Cache"] = {
+    ["cache"] = {
         ["SkyboxBk"] = "rbxassetid://220513302",
         ["SkyboxDn"] = "rbxassetid://213221473",
         ["SkyboxFt"] = "rbxassetid://220513328",
