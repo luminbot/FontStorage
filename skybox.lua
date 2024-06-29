@@ -1,5 +1,5 @@
 return {
-    ["Purple Nebula"] = {
+    ["nebula"] = {
         ["SkyboxBk"] = "rbxassetid://159454299",
         ["SkyboxDn"] = "rbxassetid://159454296",
         ["SkyboxFt"] = "rbxassetid://159454293",
@@ -7,7 +7,7 @@ return {
         ["SkyboxRt"] = "rbxassetid://159454300",
         ["SkyboxUp"] = "rbxassetid://159454288",
     },
-    ["Night Sky"] = {
+    ["night"] = {
         ["SkyboxBk"] = "rbxassetid://12064107",
         ["SkyboxDn"] = "rbxassetid://12064152",
         ["SkyboxFt"] = "rbxassetid://12064121",
@@ -15,7 +15,7 @@ return {
         ["SkyboxRt"] = "rbxassetid://12064115",
         ["SkyboxUp"] = "rbxassetid://12064131",
     },
-    ["Pink Daylight"] = {
+    ["daylight"] = {
         ["SkyboxBk"] = "rbxassetid://271042516",
         ["SkyboxDn"] = "rbxassetid://271077243",
         ["SkyboxFt"] = "rbxassetid://271042556",
@@ -23,7 +23,7 @@ return {
         ["SkyboxRt"] = "rbxassetid://271042467",
         ["SkyboxUp"] = "rbxassetid://271077958",
     },
-    ["Morning Glow"] = {
+    ["glow"] = {
         ["SkyboxBk"] = "rbxassetid://1417494030",
         ["SkyboxDn"] = "rbxassetid://1417494146",
         ["SkyboxFt"] = "rbxassetid://1417494253",
@@ -47,7 +47,7 @@ return {
         ["SkyboxRt"] = "rbxassetid://220513279",
         ["SkyboxUp"] = "rbxassetid://220513345",
     },
-    ["Fade Blue"] = {
+    ["blue"] = {
         ["SkyboxBk"] = "rbxassetid://153695414",
         ["SkyboxDn"] = "rbxassetid://153695352",
         ["SkyboxFt"] = "rbxassetid://153695452",
@@ -55,7 +55,7 @@ return {
         ["SkyboxRt"] = "rbxassetid://153695383",
         ["SkyboxUp"] = "rbxassetid://153695471",
     },
-    ["Elegant Morning"] = {
+    ["elegant"] = {
         ["SkyboxBk"] = "rbxassetid://153767241",
         ["SkyboxDn"] = "rbxassetid://153767216",
         ["SkyboxFt"] = "rbxassetid://153767266",
@@ -63,7 +63,7 @@ return {
         ["SkyboxRt"] = "rbxassetid://153767231",
         ["SkyboxUp"] = "rbxassetid://153767288",
     },
-    ["Neptune"] = {
+    ["neptune"] = {
         ["SkyboxBk"] = "rbxassetid://218955819",
         ["SkyboxDn"] = "rbxassetid://218953419",
         ["SkyboxFt"] = "rbxassetid://218954524",
@@ -71,7 +71,7 @@ return {
         ["SkyboxRt"] = "rbxassetid://218957134",
         ["SkyboxUp"] = "rbxassetid://218950090",
     },
-    ["Redshift"] = {
+    ["redshift"] = {
         ["SkyboxBk"] = "rbxassetid://401664839",
         ["SkyboxDn"] = "rbxassetid://401664862",
         ["SkyboxFt"] = "rbxassetid://401664960",
