@@ -49,7 +49,7 @@ local DrawingLib = {}
 DrawingLib.Fonts = {
 	["UI"] = 0,
 	["System"] = 1,
-	["Flex"] = 2,
+	["Plex"] = 2,
 	["Monospace"] = 3
 }
 
