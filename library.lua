@@ -535,17 +535,17 @@ local Env = getgenv()
     Library.ScreenGui = Utility:New("ScreenGui", {
         Name = "\0",
         Parent = CoreGui,
-        IgnoreGuiInset = true, 
+        IgnoreGuiInset = false, 
     })
     Library.Popups = Utility:New("ScreenGui",{
         Name = "\0",
         Parent = CoreGui,
-        IgnoreGuiInset = true, 
+        IgnoreGuiInset = false, 
     })
     Library.ListsGui = Utility:New("ScreenGui", {
         Name = "\0",
         Parent = CoreGui,
-        IgnoreGuiInset = true, 
+        IgnoreGuiInset = false, 
     })
 
     --[[
