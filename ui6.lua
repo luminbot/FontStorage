@@ -3132,19 +3132,24 @@ local Env = getgenv()
             end
         end
 
-        function Dropdown.Set(item)
+        function Dropdown.Set(item, val)
             if cfg.Multi then
                 if type(item) == "table" then
                     -- too lazy to implement a for loop for a table, just set it for every item ig.
+                    for _,v in Dropdown.Items do
+                        Dropdown.Set(_, false)
+                        taskwait()
+                    end
+
                     for _,v in item do
-                        Dropdown.Set(v)
+                        Dropdown.Set(v, true)
                     end
                 else
-                    local Index = tablefind(Dropdown.Selected, item)
-                    local Item = Dropdown.Items[item]
+                    local Index = val == nil and tablefind(Dropdown.Selected, item) or val
+                    local Item = Dropdown.Items[item]  
     
                     if Item then
-                        if Index then    
+                        if Index then
                             Item.Selected = false
     
                             Library:ChangeObjectTheme(Item.Text, {
@@ -3160,7 +3165,7 @@ local Env = getgenv()
                             end
     
                             cfg.Callback(Dropdown.Selected)
-                        else    
+                        else
                             Item.Selected = true
     
                             Library:ChangeObjectTheme(Item.Text, {
