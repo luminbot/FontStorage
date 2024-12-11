@@ -3132,19 +3132,34 @@ local Env = getgenv()
             end
         end
 
-        function Dropdown.Set(item)
+        function Dropdown.Set(item, ignore_config)
             if cfg.Multi then
                 if type(item) == "table" then
-                    -- too lazy to implement a for loop for a table, just set it for every item ig.
-                    for _,v in item do
-                        Dropdown.Set(v)
+                    for _,v in Dropdown.Items do
+                        v.Selected = false
+
+                        Library:ChangeObjectTheme(v.Text, {
+                            TextColor3 = "Text"
+                        }, true)
                     end
+
+                    Dropdown.Selected = {}
+
+                    for _,v in item do
+                        Dropdown.Set(v, true)
+                    end
+
+                    if not cfg.Ignore then
+                        Library.Flags[cfg.Flag] = item
+                    end
+
+                    cfg.Callback(item)
                 else
                     local Index = tablefind(Dropdown.Selected, item)
-                    local Item = Dropdown.Items[item]
+                    local Item = Dropdown.Items[item]  
     
                     if Item then
-                        if Index then    
+                        if Index then
                             Item.Selected = false
     
                             Library:ChangeObjectTheme(Item.Text, {
@@ -3160,7 +3175,7 @@ local Env = getgenv()
                             end
     
                             cfg.Callback(Dropdown.Selected)
-                        else    
+                        else
                             Item.Selected = true
     
                             Library:ChangeObjectTheme(Item.Text, {
@@ -3171,11 +3186,13 @@ local Env = getgenv()
     
                             Dropdown.Display()
     
-                            if not cfg.Ignore then
-                                Library.Flags[cfg.Flag] = Dropdown.Selected
+                            if not ignore_config then
+                                if not cfg.Ignore then
+                                    Library.Flags[cfg.Flag] = Dropdown.Selected
+                                end
+        
+                                cfg.Callback(Dropdown.Selected)
                             end
-    
-                            cfg.Callback(Dropdown.Selected)
                         end
                     end
                 end
