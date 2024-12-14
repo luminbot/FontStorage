@@ -233,7 +233,7 @@ local Env = getgenv()
         Folder = "Cheat",
         ScreenGui = nil,
         TweenSpeed = 0.2,
-        LerpSpeed = 0.02,
+        LerpSpeed = 0.05,
         TweenEasingStyle = Enum.EasingStyle.Quint,
         Flags = {},
         ConfigFlags = {},
@@ -4193,6 +4193,7 @@ local Env = getgenv()
             Name = "WindowBackground",
             Parent = WindowOutline,
             BorderSizePixel = 0,
+            ClipsDescendants = true,
             Position = UDim2new(0, 1, 0, 1),
             Size = UDim2new(1, -2, 1, -2),
         }, true)
@@ -4205,6 +4206,7 @@ local Env = getgenv()
             Name = "WindowBackground",
             Parent = WindowBackground,
             BorderSizePixel = 0,
+            -- ClipsDescendants = true,
             Position = UDim2new(0, 0, 0, 0),
             Size = UDim2new(1, 0, 0, 0),
         }, true)
