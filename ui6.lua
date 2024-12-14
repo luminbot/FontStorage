@@ -2003,19 +2003,6 @@ local Env = getgenv()
             })
         end
 
-        local SectionHighlight = Library:New("Frame", {
-            Name = "SectionOutline",
-            Parent = Library.ScreenGui,
-            BackgroundTransparency = 0.5,
-            BorderSizePixel = 0,
-            Size = UDim2new(),
-            Visible = false,
-        })
-
-        Library:AddTheme(SectionHighlight, {
-            BackgroundColor3 = "Accent",
-        })
-
         local SectionOutline = Library:New("Frame", {
             Name = "SectionOutline",
             Parent = Side,
@@ -2067,7 +2054,6 @@ local Env = getgenv()
         Library:AddTheme(SectionBackground, {
             BackgroundColor3 = "Background"
         })
-
         
         local SectionLabel = Library:New("TextLabel", {
             Name = "SectionLabel",
@@ -2082,31 +2068,6 @@ local Env = getgenv()
             TextStrokeTransparency = 0,
             TextXAlignment = Enum.TextXAlignment.Left,
         })
-
-        local ResizeBox = Library:New("TextLabel", {
-            Name = "ResizeBox",
-            Parent = SectionBackground,
-            BackgroundTransparency = 1,
-            BorderSizePixel = 0,
-            ZIndex = 4,
-            Text = "",
-            Position = UDim2new(0, 0, 1, -3),
-            Size = UDim2new(1, 0, 0, 8),
-        })
-
-        local Dragbox = Library:New("TextLabel", {
-            Name = "Dragbox",
-            Parent = SectionBackground,
-            BackgroundTransparency = 1,
-            BorderSizePixel = 0,
-            ZIndex = 4,
-            Text = "",
-            Position = UDim2new(0, 0, 0, -6),
-            Size = UDim2new(1, 0, 0, 10),
-        })
-
-        Library:MakeDraggable(SectionOutline, Dragbox)
-        Library:MakeResizable(SectionOutline, ResizeBox, false)
 
         Library:AddTheme(SectionLabel, {
             BackgroundColor3 = "Background",
@@ -2149,168 +2110,6 @@ local Env = getgenv()
             SortOrder = Enum.SortOrder.LayoutOrder,
             Padding = UDimnew(0, 4),
         })
-
-        local function GetSide()
-            local Position = SectionOutline.AbsolutePosition
-            
-            local Side = nil
-
-            if Utility:PositionOver(Position, Left, 5^12) then
-                Side = Left
-            end
-
-            if Utility:PositionOver(Position, Right, 5^12) then
-                Side = Right
-            end
-
-            if not Side then
-                return nil
-            end
-
-            -- gay fggot math nigger
-
-            local ClosestIndex = nil
-            --local MinDistance = math.huge
-        
-            for i, Section in next, Side:GetChildren() do
-                if not Section:IsA("Frame") then
-                    continue
-                end
-
-                -- local HolderPosition = Holder.AbsolutePosition
-                -- local HolderSize = Holder.AbsoluteSize
-    
-                -- local LeftEdge = HolderPosition.X
-                -- local RightEdge = HolderPosition.X + HolderSize.X
-                -- local TopEdge = HolderPosition.Y
-                -- local BottomEdge = HolderPosition.Y + HolderSize.Y
-    
-                -- local ClosestX = math.clamp(Position.X, LeftEdge, RightEdge)
-                -- local ClosestY = math.clamp(Position.Y, TopEdge, BottomEdge)
-                -- local ClosestPoint = Vector2.new(ClosestX, ClosestY)
-    
-                -- local Distance = (Position - ClosestPoint).Magnitude
-    
-                -- if Distance < MinDistance then
-                --     MinDistance = Distance
-                --     ClosestIndex = i
-                -- end
-
-                if Utility:PositionOver(SectionOutline.AbsolutePosition, Section) then
-                    ClosestIndex = i
-
-                    break
-                end
-            end
-            
-            if not ClosestIndex then
-                ClosestIndex = #Side:GetChildren()
-            end
-            
-            return Side, ClosestIndex
-        end
-
-        Utility:Connect(SectionBackground.InputBegan, function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                if Section.Inside then
-                    Section.Inside = false
-
-                    -- Remove the highlight
-                    SectionHighlight.Visible = false
-                    SectionHighlight.Parent = Library.ScreenGui
-
-                    -- Set the size to absolute size, and the position to aboslute position. We have to do this before parenting.
-                    SectionOutline.Size = UDim2new(0, SectionOutline.AbsoluteSize.x, 0, SectionOutline.AbsoluteSize.y)
-                    SectionOutline.Position = UDim2new(0, SectionOutline.AbsolutePosition.x, 0, SectionOutline.AbsolutePosition.y)
-                    
-                    -- Now lets set the parrent to the library screen gui. (we don't have to save this i think?)
-                    SectionOutline.Parent = Library.ScreenGui
-                end
-            end
-        end)
-
-        Utility:Connect(SectionBackground.InputChanged, function(input)
-            if input.UserInputType == Enum.UserInputType.MouseMovement then
-                if not Section.Inside then
-                    local Side, Index = GetSide()
-
-                    if not Side then
-                        SectionHighlight.Visible = false
-                        SectionHighlight.Parent = Library.ScreenGui
-
-                        return
-                    end
-
-                    if Section and Index then
-                        local Objects = {}
-
-                        SectionHighlight.Visible = true
-                        SectionHighlight.LayoutOrder = Index + 1
-
-                        local Count = 0
-                        for i,v in next, Side:GetChildren() do
-                            if v:IsA("Frame") and Index > i and i ~= Index then
-                                Objects[#Objects + 1] = v
-
-                                Count += 1
-
-                                v.LayoutOrder = Count + Index
-                            end
-                        end
-
-                        SectionHighlight.Parent = Side
-                    else
-                        SectionHighlight.Visible = true
-                        SectionHighlight.Parent = Side
-                    end
-
-                    SectionHighlight.Size = UDim2new(1, 0, 0, SectionOutline.AbsoluteSize.y)
-                end
-            end
-        end)
-
-        Utility:Connect(SectionBackground.InputEnded, function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                SectionHighlight.Visible = false
-                SectionHighlight.Parent = Library.ScreenGui
-
-                if not Section.Inside then
-                    -- Lets try to get the closest side, and see if we are even on the section.
-
-                    local Side, Index = GetSide()
-
-                    if not Side then
-                        return
-                    end
-
-                    Section.Inside = true
-
-                    if Section and Index then
-                        local Objects = {}
-
-                        SectionOutline.LayoutOrder = Index + 1
-
-                        local Count = 0
-                        for i,v in next, Side:GetChildren() do
-                            if v:IsA("Frame") and Index > i and i ~= Index then
-                                Objects[#Objects + 1] = v
-
-                                Count += 1
-
-                                v.LayoutOrder = Count + Index
-                            end
-                        end
-
-                        SectionOutline.Parent = Side
-                    else
-                        SectionOutline.Parent = Side
-                    end
-
-                    -- Set the size again, lets not use the old one since we have resizing
-                    SectionOutline.Size = UDim2new(1, 0, 0, SectionOutline.AbsoluteSize.y)
-                end
-            end
-        end)
 
         Utility:Connect(SectionScrollingHolder:GetPropertyChangedSignal("AbsoluteSize"), function()
             if SectionScrollingHolder.AbsoluteCanvasSize.Y > SectionScrollingHolder.AbsoluteSize.Y then
@@ -3132,19 +2931,34 @@ local Env = getgenv()
             end
         end
 
-        function Dropdown.Set(item)
+        function Dropdown.Set(item, ignore_config)
             if cfg.Multi then
                 if type(item) == "table" then
-                    -- too lazy to implement a for loop for a table, just set it for every item ig.
-                    for _,v in item do
-                        Dropdown.Set(v)
+                    for _,v in Dropdown.Items do
+                        v.Selected = false
+
+                        Library:ChangeObjectTheme(v.Text, {
+                            TextColor3 = "Text"
+                        }, true)
                     end
+
+                    Dropdown.Selected = {}
+
+                    for _,v in item do
+                        Dropdown.Set(v, true)
+                    end
+
+                    if not cfg.Ignore then
+                        Library.Flags[cfg.Flag] = item
+                    end
+
+                    cfg.Callback(item)
                 else
                     local Index = tablefind(Dropdown.Selected, item)
-                    local Item = Dropdown.Items[item]
+                    local Item = Dropdown.Items[item]  
     
                     if Item then
-                        if Index then    
+                        if Index then
                             Item.Selected = false
     
                             Library:ChangeObjectTheme(Item.Text, {
@@ -3160,7 +2974,7 @@ local Env = getgenv()
                             end
     
                             cfg.Callback(Dropdown.Selected)
-                        else    
+                        else
                             Item.Selected = true
     
                             Library:ChangeObjectTheme(Item.Text, {
@@ -3171,11 +2985,13 @@ local Env = getgenv()
     
                             Dropdown.Display()
     
-                            if not cfg.Ignore then
-                                Library.Flags[cfg.Flag] = Dropdown.Selected
+                            if not ignore_config then
+                                if not cfg.Ignore then
+                                    Library.Flags[cfg.Flag] = Dropdown.Selected
+                                end
+        
+                                cfg.Callback(Dropdown.Selected)
                             end
-    
-                            cfg.Callback(Dropdown.Selected)
                         end
                     end
                 end
@@ -3868,6 +3684,10 @@ local Env = getgenv()
         end)
 
         Utility:Connect(UserInputService.InputBegan, function(input)
+            if UserInputService:GetFocusedTextBox() then 
+                return 
+            end
+
             if Keybind.Listening then
                 Keybind.Set(input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode or input.UserInputType)
                 Keybind.Listening = false
@@ -3881,6 +3701,10 @@ local Env = getgenv()
         end)
 
         Utility:Connect(UserInputService.InputEnded, function(input)
+            if UserInputService:GetFocusedTextBox() then
+                return
+            end
+            
             if Keybind.Mode == "Hold" and (input.KeyCode == Keybind.Key or input.UserInputType == Keybind.Key) and not Keybind.Listening then
                 Keybind.Set(false)
             end
@@ -4715,93 +4539,93 @@ local Env = getgenv()
     -- Section:Colorpicker({})
 --
 
--- do -- toggles
+do -- toggles
 
---     local Window = Library:Window({ Name = "Lumora: Phantom Forces", Fading = false, Watermark = true, Keybinds = true, Size = Vector2new(520, 460) })
+    local Window = Library:Window({ Name = "Lumora: Phantom Forces", Fading = false, Watermark = true, Keybinds = true, Size = Vector2new(520, 460) })
     
---     local LegitTab = Window:Tab({ Name = "Legit" })
---     local RageTab = Window:Tab({ Name = "Rage" })
---     local EspTab = Window:Tab({ Name = "Esp" })
---     local VisualsTab = Window:Tab({ Name = "Visuals" })
---     local MiscTab = Window:Tab({ Name = "Misc" })
---     local PlayersTab = Window:Tab({ Name = "Players" })
---     local SettingsTab = Window:Tab({ Name = "Settings" })
+    local LegitTab = Window:Tab({ Name = "Legit" })
+    local RageTab = Window:Tab({ Name = "Rage" })
+    local EspTab = Window:Tab({ Name = "Esp" })
+    local VisualsTab = Window:Tab({ Name = "Visuals" })
+    local MiscTab = Window:Tab({ Name = "Misc" })
+    local PlayersTab = Window:Tab({ Name = "Players" })
+    local SettingsTab = Window:Tab({ Name = "Settings" })
     
---     -- this is so pasted :yawn:
---     do -- Legit
---         local Aimbot = LegitTab:Section({ Name = "Aimbot" }) do
---             Aimbot:Toggle({ Name = "Enabled", Flag = "aimbot" })
---                 :Keybind({ Name = "Aimbot", Flag = "aimbot_key" })
---             Aimbot:Toggle({ Name = "Use Field Of View", Flag = "aimbot_use_fov" })
---             Aimbot:Slider({Name = "FoV Amount", Suffix = "°", Float = 1, Value = 40, Min = 0, Max = 360, Flag = "aimbot_fov"})
---             Aimbot:Toggle({ Name = "Follow Barrel", Flag = "aimbot_use_barrel" })
---             Aimbot:Toggle({ Name = "Dynamic FoV", Flag = "aimbot_dynamic_fov" })
---             Aimbot:Slider({Name = "Horizontal Smoothing", Suffix = "%", Float = 1, Value = 1, Min = 1, Max = 100, Flag = "aimbot_smoothing_horizontal"})
---             Aimbot:Slider({Name = "Vertical Smoothing", Suffix = "%", Float = 1, Value = 1, Min = 1, Max = 100, Flag = "aimbot_smoothing_vertical"})
---             Aimbot:Toggle({ Name = "Predict Trajectory", Flag = "aimbot_predict_trajectory" })
---             Aimbot:Toggle({ Name = "Predict Velocity", Flag = "aimbot_predict_velocity" })
---             Aimbot:Slider({Name = "Amount", Suffix = "%", Float = 1, Value = 100, Min = 0, Max = 100, Flag = "aimbot_predict_velocity_amount"})
---             Aimbot:Dropdown({Name = "Visibility Check", Values = {"Off", "Visible", "Autowall"}, Value = "Off", Flag = "aimbot_vis_check"})
---             Aimbot:Toggle({ Name = "Dead Zone", Flag = "aimbot_dead_zone" })
---             Aimbot:Slider({Name = "FoV Amount", Suffix = "°", Float = 1, Value = 3, Min = 0, Max = 40, Flag = "aimbot_dead_zone_fov"})
---             Aimbot:Toggle({ Name = "Sticky Aim", Flag = "aimbot_sticky" })
---             Aimbot:Dropdown({Name = "Hitboxes", Values = {"Head", "Torso", "Arms", "Legs"}, Value = {"Head", "Torso"}, Multi = true, Flag = "aimbot_hitboxes"})
---             Aimbot:Dropdown({Name = "Scanning", Values = {"Screen", "Distance", "Health"}, Value = "Screen", Flag = "aimbot_scanning"})
---         end
+    -- this is so pasted :yawn:
+    do -- Legit
+        local Aimbot = LegitTab:Section({ Name = "Aimbot" }) do
+            Aimbot:Toggle({ Name = "Enabled", Flag = "aimbot" })
+                :Keybind({ Name = "Aimbot", Flag = "aimbot_key" })
+            Aimbot:Toggle({ Name = "Use Field Of View", Flag = "aimbot_use_fov" })
+            Aimbot:Slider({Name = "FoV Amount", Suffix = "°", Float = 1, Value = 40, Min = 0, Max = 360, Flag = "aimbot_fov"})
+            Aimbot:Toggle({ Name = "Follow Barrel", Flag = "aimbot_use_barrel" })
+            Aimbot:Toggle({ Name = "Dynamic FoV", Flag = "aimbot_dynamic_fov" })
+            Aimbot:Slider({Name = "Horizontal Smoothing", Suffix = "%", Float = 1, Value = 1, Min = 1, Max = 100, Flag = "aimbot_smoothing_horizontal"})
+            Aimbot:Slider({Name = "Vertical Smoothing", Suffix = "%", Float = 1, Value = 1, Min = 1, Max = 100, Flag = "aimbot_smoothing_vertical"})
+            Aimbot:Toggle({ Name = "Predict Trajectory", Flag = "aimbot_predict_trajectory" })
+            Aimbot:Toggle({ Name = "Predict Velocity", Flag = "aimbot_predict_velocity" })
+            Aimbot:Slider({Name = "Amount", Suffix = "%", Float = 1, Value = 100, Min = 0, Max = 100, Flag = "aimbot_predict_velocity_amount"})
+            Aimbot:Dropdown({Name = "Visibility Check", Values = {"Off", "Visible", "Autowall"}, Value = "Off", Flag = "aimbot_vis_check"})
+            Aimbot:Toggle({ Name = "Dead Zone", Flag = "aimbot_dead_zone" })
+            Aimbot:Slider({Name = "FoV Amount", Suffix = "°", Float = 1, Value = 3, Min = 0, Max = 40, Flag = "aimbot_dead_zone_fov"})
+            Aimbot:Toggle({ Name = "Sticky Aim", Flag = "aimbot_sticky" })
+            Aimbot:Dropdown({Name = "Hitboxes", Values = {"Head", "Torso", "Arms", "Legs"}, Value = {"Head", "Torso"}, Multi = true, Flag = "aimbot_hitboxes"})
+            Aimbot:Dropdown({Name = "Scanning", Values = {"Screen", "Distance", "Health"}, Value = "Screen", Flag = "aimbot_scanning"})
+        end
 
---         local SilentAim = LegitTab:Section({ Name = "Bullet Redirection", Side = "Right" }) do
---             SilentAim:Toggle({ Name = "Enabled", Flag = "silent_aim" })
---                 :Keybind({ Name = "Bullet Redirection", Flag = "silent_aim_key" })
---             SilentAim:Toggle({ Name = "Use Field Of View", Flag = "silent_aim_use_fov" })
---             SilentAim:Slider({Name = "FoV Amount", Suffix = "°", Float = 1, Value = 40, Min = 0, Max = 360, Flag = "silent_aim_fov"})
---             SilentAim:Toggle({ Name = "Follow Barrel", Flag = "silent_aim_use_barrel" })
---             SilentAim:Toggle({ Name = "Dynamic FoV", Flag = "silent_aim_dynamic_fov" })
---             SilentAim:Slider({Name = "Hitchance", Suffix = "%", Float = 1, Value = 1, Min = 1, Max = 100, Flag = "silent_aim_hitchance"})
---             SilentAim:Toggle({ Name = "Instant Hit", Flag = "silent_aim_instant_hit" })
---             SilentAim:Toggle({ Name = "Predict Velocity", Flag = "silent_aim_predict_velocity" })
---             SilentAim:Slider({Name = "Amount", Suffix = "%", Float = 1, Value = 100, Min = 0, Max = 100, Flag = "silent_aim_predict_velocity_amount"})
---             SilentAim:Dropdown({Name = "Visibility Check", Values = {"Off", "Visible", "Autowall"}, Value = "Off", Flag = "silent_aim_vis_check"})
---             SilentAim:Toggle({ Name = "Dead Zone", Flag = "silent_aim_dead_zone" })
---             SilentAim:Slider({Name = "FoV Amount", Suffix = "°", Float = 1, Value = 3, Min = 0, Max = 40, Flag = "silent_aim_dead_zone_fov"})
---             SilentAim:Toggle({ Name = "Sticky Aim", Flag = "silent_aim_sticky" })
---             SilentAim:Dropdown({Name = "Hitboxes", Values = {"Head", "Torso", "Arms", "Legs"}, Value = {"Head", "Torso"}, Multi = true, Flag = "silent_aim_hitboxes"})
---             SilentAim:Dropdown({Name = "Scanning", Values = {"Screen", "Distance", "Health"}, Value = "Screen", Flag = "silent_aim_scanning"})
---         end
---     end
+        local SilentAim = LegitTab:Section({ Name = "Bullet Redirection", Side = "Right" }) do
+            SilentAim:Toggle({ Name = "Enabled", Flag = "silent_aim" })
+                :Keybind({ Name = "Bullet Redirection", Flag = "silent_aim_key" })
+            SilentAim:Toggle({ Name = "Use Field Of View", Flag = "silent_aim_use_fov" })
+            SilentAim:Slider({Name = "FoV Amount", Suffix = "°", Float = 1, Value = 40, Min = 0, Max = 360, Flag = "silent_aim_fov"})
+            SilentAim:Toggle({ Name = "Follow Barrel", Flag = "silent_aim_use_barrel" })
+            SilentAim:Toggle({ Name = "Dynamic FoV", Flag = "silent_aim_dynamic_fov" })
+            SilentAim:Slider({Name = "Hitchance", Suffix = "%", Float = 1, Value = 1, Min = 1, Max = 100, Flag = "silent_aim_hitchance"})
+            SilentAim:Toggle({ Name = "Instant Hit", Flag = "silent_aim_instant_hit" })
+            SilentAim:Toggle({ Name = "Predict Velocity", Flag = "silent_aim_predict_velocity" })
+            SilentAim:Slider({Name = "Amount", Suffix = "%", Float = 1, Value = 100, Min = 0, Max = 100, Flag = "silent_aim_predict_velocity_amount"})
+            SilentAim:Dropdown({Name = "Visibility Check", Values = {"Off", "Visible", "Autowall"}, Value = "Off", Flag = "silent_aim_vis_check"})
+            SilentAim:Toggle({ Name = "Dead Zone", Flag = "silent_aim_dead_zone" })
+            SilentAim:Slider({Name = "FoV Amount", Suffix = "°", Float = 1, Value = 3, Min = 0, Max = 40, Flag = "silent_aim_dead_zone_fov"})
+            SilentAim:Toggle({ Name = "Sticky Aim", Flag = "silent_aim_sticky" })
+            SilentAim:Dropdown({Name = "Hitboxes", Values = {"Head", "Torso", "Arms", "Legs"}, Value = {"Head", "Torso"}, Multi = true, Flag = "silent_aim_hitboxes"})
+            SilentAim:Dropdown({Name = "Scanning", Values = {"Screen", "Distance", "Health"}, Value = "Screen", Flag = "silent_aim_scanning"})
+        end
+    end
 
---     local EnemyESP = EspTab:Section({Name = "Enemy"}) do
---         EnemyESP:Toggle({Name = "Enabled", Flag = "enemy_enabled"})
---         local Box = EnemyESP:Toggle({Name = "Bounding Box", Flag = "enemy_box"})
---         Box:Colorpicker({})
---         Box:Colorpicker({Name = "Box Fill Color", Flag = "enemy_box_fill_c", Transparency = 0})
---         EnemyESP:Toggle({Name = "Name", Flag = "enemy_name"})
---             :Colorpicker({Name = "Name Color", Flag = "enemy_name_c"})
---         EnemyESP:Colorpicker({Name = "Name Color", Flag = "enemy_name_c"})
---         local HealthBar = EnemyESP:Toggle({Name = "Health Bar", Flag = "enemy_health_bar"})
---         HealthBar:Colorpicker({Name = "Health Bar From", Color = Color3fromRGB(0, 255, 0), Flag = "enemy_health_bar_1"})
---         HealthBar:Colorpicker({Name = "Health Bar To", Color = Color3fromRGB(0, 255, 0), Flag = "enemy_health_bar_2"})
---         local HealthNumber = EnemyESP:Toggle({Name = "Health Number", Flag = "enemy_health_number"})
---         HealthNumber:Colorpicker({Name = "Health Number From", Color = Color3fromRGB(0, 255, 0), Flag = "enemy_health_number_1"})
---         HealthNumber:Colorpicker({Name = "Health Number To", Color = Color3fromRGB(0, 255, 0), Flag = "enemy_health_number_2"})
---         EnemyESP:Toggle({Name = "Distance", Flag = "enemy_distance"})
---             :Colorpicker({Name = "Distance Color", Flag = "enemy_distance_c"})
---         EnemyESP:Toggle({Name = "Weapon", Flag = "enemy_weapon"})
---             :Colorpicker({Name = "Weapon Color", Flag = "enemy_weapon_c"})
---         EnemyESP:Toggle({Name = "Rank", Flag = "enemy_rank"})
---             :Colorpicker({Name = "Rank Color", Flag = "enemy_rank_c"})
---         EnemyESP:Toggle({Name = "Exploiting", Flag = "enemy_exploiting"})
---             :Colorpicker({Name = "Exploiting Color", Flag = "enemy_exploiting_c"})
---         EnemyESP:Toggle({Name = "Stance", Flag = "enemy_stance"})
---             :Colorpicker({Name = "Stance Color", Flag = "enemy_stance_c"})  
---         local Chams = EnemyESP:Toggle({Name = "Chams", Flag = "enemy_cham_enabled"})
---             Chams:Colorpicker({Name = "Chams Outline", Color = Color3fromRGB(0, 255, 0), Flag = "enemy_cham_outline"})
---             Chams:Colorpicker({Name = "Chams Fill", Color = Color3fromRGB(0, 255, 0), Flag = "enemy_cham_fill"})
---         local oof = EnemyESP:Toggle({Name = "Out of View", Flag = "enemy_oof"})
---         oof:Colorpicker({Name = "Out of View Color", Flag = "enemy_oof_c"})
---         oof:Colorpicker({Name = "Out of View Outline Color", Flag = "enemy_oof_o_c"})
---         EnemyESP:Slider({Name = "Size", Suffix = "px", Float = 1, Value = 13, Min = 0, Max = 30, Flag = "enemy_oof_size"})
---         EnemyESP:Slider({Name = "Radius", Suffix = "px", Float = 1, Value = 200, Min = 0, Max = 1000, Flag = "enemy_oof_fov"})
---     end
--- end
+    local EnemyESP = EspTab:Section({Name = "Enemy"}) do
+        EnemyESP:Toggle({Name = "Enabled", Flag = "enemy_enabled"})
+        local Box = EnemyESP:Toggle({Name = "Bounding Box", Flag = "enemy_box"})
+        Box:Colorpicker({})
+        Box:Colorpicker({Name = "Box Fill Color", Flag = "enemy_box_fill_c", Transparency = 0})
+        EnemyESP:Toggle({Name = "Name", Flag = "enemy_name"})
+            :Colorpicker({Name = "Name Color", Flag = "enemy_name_c"})
+        EnemyESP:Colorpicker({Name = "Name Color", Flag = "enemy_name_c"})
+        local HealthBar = EnemyESP:Toggle({Name = "Health Bar", Flag = "enemy_health_bar"})
+        HealthBar:Colorpicker({Name = "Health Bar From", Color = Color3fromRGB(0, 255, 0), Flag = "enemy_health_bar_1"})
+        HealthBar:Colorpicker({Name = "Health Bar To", Color = Color3fromRGB(0, 255, 0), Flag = "enemy_health_bar_2"})
+        local HealthNumber = EnemyESP:Toggle({Name = "Health Number", Flag = "enemy_health_number"})
+        HealthNumber:Colorpicker({Name = "Health Number From", Color = Color3fromRGB(0, 255, 0), Flag = "enemy_health_number_1"})
+        HealthNumber:Colorpicker({Name = "Health Number To", Color = Color3fromRGB(0, 255, 0), Flag = "enemy_health_number_2"})
+        EnemyESP:Toggle({Name = "Distance", Flag = "enemy_distance"})
+            :Colorpicker({Name = "Distance Color", Flag = "enemy_distance_c"})
+        EnemyESP:Toggle({Name = "Weapon", Flag = "enemy_weapon"})
+            :Colorpicker({Name = "Weapon Color", Flag = "enemy_weapon_c"})
+        EnemyESP:Toggle({Name = "Rank", Flag = "enemy_rank"})
+            :Colorpicker({Name = "Rank Color", Flag = "enemy_rank_c"})
+        EnemyESP:Toggle({Name = "Exploiting", Flag = "enemy_exploiting"})
+            :Colorpicker({Name = "Exploiting Color", Flag = "enemy_exploiting_c"})
+        EnemyESP:Toggle({Name = "Stance", Flag = "enemy_stance"})
+            :Colorpicker({Name = "Stance Color", Flag = "enemy_stance_c"})  
+        local Chams = EnemyESP:Toggle({Name = "Chams", Flag = "enemy_cham_enabled"})
+            Chams:Colorpicker({Name = "Chams Outline", Color = Color3fromRGB(0, 255, 0), Flag = "enemy_cham_outline"})
+            Chams:Colorpicker({Name = "Chams Fill", Color = Color3fromRGB(0, 255, 0), Flag = "enemy_cham_fill"})
+        local oof = EnemyESP:Toggle({Name = "Out of View", Flag = "enemy_oof"})
+        oof:Colorpicker({Name = "Out of View Color", Flag = "enemy_oof_c"})
+        oof:Colorpicker({Name = "Out of View Outline Color", Flag = "enemy_oof_o_c"})
+        EnemyESP:Slider({Name = "Size", Suffix = "px", Float = 1, Value = 13, Min = 0, Max = 30, Flag = "enemy_oof_size"})
+        EnemyESP:Slider({Name = "Radius", Suffix = "px", Float = 1, Value = 200, Min = 0, Max = 1000, Flag = "enemy_oof_fov"})
+    end
+end
 
 return Env, Library
