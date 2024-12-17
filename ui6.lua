@@ -3594,7 +3594,7 @@ local Env = getgenv()
                 Keybind.Key = input or "-"
 
                 local Text = (ConvertKeys[Keybind.Key] or tostring(Keybind.Key):gsub("Enum.", ""))
-                local Text2 = (tostring(Text):gsub("KeyCode.", ""):gsub("UserInputType.", "")) or "-"
+                local Text2 = (tostring(Text):gsub("KeyCode.", ""):gsub("UserInputType.", ""):gsub("Gamepad1.", "")) or "-"
                 KeybindValue.Text = "[" .. Text2 .. "]"
 
                 cfg.Callback(Keybind.Value or false)
@@ -3622,7 +3622,7 @@ local Env = getgenv()
                 end
 
                 local Text = tostring(Keybind.Key) ~= "Enums" and (ConvertKeys[Keybind.Key] or tostring(Keybind.Key):gsub("Enum.", "")) or nil
-                local Text2 = Text and (tostring(Text):gsub("KeyCode.", ""):gsub("UserInputType.", ""))
+                local Text2 = Text and (tostring(Text):gsub("KeyCode.", ""):gsub("UserInputType.", ""):gsub("Gamepad1.", ""))
                 KeybindValue.Text = "[" .. Text2 .. "]" or "[-]"
 
                 cfg.Callback(Keybind.Value or false)
@@ -3632,7 +3632,7 @@ local Env = getgenv()
                 Library.Keybinds[cfg.Flag] = {
                     Flag = cfg.Flag,
                     Status = Keybind.Value,
-                    Text = ("[%s]: %s"):format(tostring(Keybind.Key):gsub("Enum.KeyCode.", ""):gsub("Enum.UserInputType.", ""), cfg.Name)
+                    Text = ("[%s]: %s"):format(tostring(Keybind.Key):gsub("Enum.KeyCode.", ""):gsub("Enum.UserInputType.", ""):gsub("Enum.Gamepad1.", ""), cfg.Name)
                 }
             end
 
@@ -3689,7 +3689,7 @@ local Env = getgenv()
             end
 
             if Keybind.Listening then
-                Keybind.Set(input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode or input.UserInputType)
+                Keybind.Set(input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode or input.UserInputType == Enum.UserInputType.Gamepad1 and input.Gamepad1 or input.UserInputType)
                 Keybind.Listening = false
 
                 Library:ChangeObjectTheme(KeybindValue, {
