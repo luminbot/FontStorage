@@ -1564,8 +1564,9 @@ local Env = getgenv()
             })
         end
 
-        local WindowOutline = Library:New("Frame", {
+        local WindowOutline = Library:New("TextButton", {
             Name = "WindowOutline",
+            Text = "",
             Parent = cfg.Holder,
             BorderSizePixel = 0,
             Position = cfg.Position or UDim2new(0.5, -(cfg.Size.x / 2), 0.5, -(cfg.Size.y / 2)),
